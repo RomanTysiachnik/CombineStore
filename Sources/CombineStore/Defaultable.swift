@@ -3,5 +3,5 @@
 import Foundation
 
 public protocol Defaultable {
-  static var defaultValue: Self { get }
+    static var defaultValue: Self { get }
 }

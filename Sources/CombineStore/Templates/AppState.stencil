@@ -1,0 +1,35 @@
+//
+//  AppState.stencil
+//  
+//
+//  Created by Roman Tysiachnik on 4/27/21.
+//
+
+import Foundation
+
+public struct AppState: StateProtocol {
+{% for type in types.implementing.StateProtocol %}
+    public let {{ type.name|replace:"App",""|replace:"State",""| lowerFirstWord}}: {{ type.name }}
+{% endfor %}
+}
+
+public extension AppState {
+    static var defaultValue: AppState {
+        AppState(
+            {% for type in types.implementing.StateProtocol %}
+            {{ type.name|replace:"App",""|replace:"State",""| lowerFirstWord}}: .defaultValue{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        )
+    }
+}
+
+public extension AppState {
+    static func reduce(state: AppState, _ event: AppEvent) -> AppState {
+        return AppState(
+        {% for type in types.implementing.StateProtocol %}
+        {% set stateName %} {{ type.name|replace:"App",""|replace:"State",""| lowerFirstWord }} {% endset %}
+            {{ stateName }}: .reduce(state: state.{{stateName}}, event: event){% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        )
+    }
+}
